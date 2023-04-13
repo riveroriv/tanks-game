@@ -1,10 +1,9 @@
 from conf import *
 
 class Menu(arcade.View):
-    def __init__(self, players=2):
+    def __init__(self, players: int):
         super().__init__()
         arcade.set_background_color(COLOR_PRINCIPAL)
-        self.retorno = None
         self.players = players
         self.title_speed = 0.15
         self.title_delta_y = 10
@@ -100,6 +99,3 @@ class Menu(arcade.View):
         
         if symbol == arcade.key.SPACE or symbol == arcade.key.ENTER :
             self.window.run_game(self.players)
-            #next_view = Game(self.players)
-            #next_view.setup()
-            #self.window.show_view(next_view)

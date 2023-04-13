@@ -11,16 +11,16 @@ class App(arcade.Window):
         if symbol == arcade.key.ESCAPE :
             self.close()
 
-    def run_menu(self, players):
+    def run_menu(self, players=2):
         view = Menu(players)
         self.show_view(view)
     
-    def run_game(self, players):
+    def run_game(self, players=2):
         view = Game(players)
         self.show_view(view)
     
-    def run_winner(self, winner, players):
-        view = Winner(winner)
+    def run_winner(self, winner, players=2):
+        view = Winner(winner, players)
         self.show_view(view)
     
     def run(self):

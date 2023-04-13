@@ -25,3 +25,5 @@ COLOR_PLAYER = {
 
 FONT_DIR = 'font/FGR.ttf'
 FONT_NAME = 'Franklin Gothic Heavy'
+
+BORDER = 20
