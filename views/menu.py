@@ -15,10 +15,10 @@ class Menu(arcade.View):
             4: [-300, -100, 100, 300],
         }
         self.tanks = [
-            Tank('img/tank_r.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2),
-            Tank('img/tank_b.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2),
-            Tank('img/tank_y.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2),
-            Tank('img/tank_g.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2)
+            Tank('img/tank_r_b.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2 - 20),
+            Tank('img/tank_b_b.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2 - 20),
+            Tank('img/tank_y_b.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2 - 20),
+            Tank('img/tank_g_b.png', 1, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT / 2 - 20)
             ]
         
         self.left = COLOR_BLANCO

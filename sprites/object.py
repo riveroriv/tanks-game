@@ -25,6 +25,7 @@ class Object(arcade.Sprite):
     def update(self):
         if not self.destroyed and not self.fixed:
             self.shape.body.position += self.velocity
+            self.angle = math.degrees(self.shape.body.angle)
             self.center_x = self.shape.body.position.x
             self.center_y = self.shape.body.position.y
     
