@@ -1,4 +1,5 @@
 from conf import *
+from sprites import *
 import pymunk
 
 class Game(arcade.View):
@@ -11,6 +12,7 @@ class Game(arcade.View):
 
         self.tanks = arcade.SpriteList()
         self.sprites = arcade.SpriteList()
+        self.bullets = arcade.SpriteList()
         
         margin = 100
         tanks = [
@@ -30,23 +32,41 @@ class Game(arcade.View):
 
         for i in range(players):
             image, center_x, center_y = tanks[i]
-
-            body = pymunk.Body(1, pymunk.moment_for_box(10, (40, 40)))
-            body.position = pymunk.Vec2d(center_x, center_y)
-            shape = pymunk.Poly.create_box(body, (40, 40))
-            shape.elasticity = 1
-            shape.friction = 1
+            player = Tank(image, 0.3, center_x, center_y)
+            body, shape = player.make_shape(10, (45,45), 1, 1)
             self.space.add(body, shape)
-            player = Tank(image, 0.3, center_x, center_y, shape)
-
             self.tanks.append(player)
             self.sprites.append(player)
+        
+        self.add_objects()
     
     def add_wall(self, x1, y1, x2, y2):
         wall_body = pymunk.Body(body_type=pymunk.Body.STATIC)
         wall_shape = pymunk.Segment(wall_body, (x1, y1), (x2, y2), 5)
         wall_shape.friction = 1
         self.space.add(wall_body, wall_shape)
+    
+    def add_bullet(self, bullet):
+        if bullet != None :
+            self.space.add(bullet.shape.body, bullet.shape)
+            self.bullets.append(bullet)
+            self.sprites.append(bullet)
+    
+    def add_bush(self, x, y):
+        bush = Object('img/bush.png', 0.2, 0, x, y, True)
+        bush.make_shape(2, (45,45), 0.3, 1)
+        self.space.add(bush.shape.body, bush.shape)
+        self.sprites.append(bush)
+    
+    def add_box(self, x, y):
+        box = Object('img/wood_box.png', 0.04, 0, x, y)
+        box.make_shape(2, (45,45))
+        self.space.add(box.shape.body, box.shape)
+        self.sprites.append(box)
+
+    def add_objects(self):
+        self.add_box(400,400)
+        self.add_bush(500,500)
 
     def on_draw(self):
         self.clear()
@@ -66,23 +86,23 @@ class Game(arcade.View):
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Z :
             self.tanks[0].avanzar()
+            self.tanks[0].die()
+            self.add_bullet(self.tanks[0].shoot())
         if symbol == arcade.key.M :
             self.tanks[1].avanzar()
+            self.add_bullet(self.tanks[1].shoot())
         if symbol == arcade.key.Q and self.players > 2 :
             self.tanks[2].avanzar()
+            self.add_bullet(self.tanks[2].shoot())
         if symbol == arcade.key.P and self.players > 3 :
             self.tanks[3].avanzar()
+            self.add_bullet(self.tanks[3].shoot())
     
     def on_key_release(self, symbol, modifiers):
-        if symbol == arcade.key.Z :
-            self.tanks[0].detener()
-        if symbol == arcade.key.M :
-            self.tanks[1].detener()
-        if symbol == arcade.key.Q and self.players > 2:
-            self.tanks[2].detener()
-        if symbol == arcade.key.P and self.players > 3:
-            self.tanks[3].detener()
-        
-
+        if symbol == arcade.key.Z : self.tanks[0].detener()
+        if symbol == arcade.key.M : self.tanks[1].detener()
+        if symbol == arcade.key.Q and self.players > 2: self.tanks[2].detener()
+        if symbol == arcade.key.P and self.players > 3: self.tanks[3].detener()
+    
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         self.window.run_winner(self.winner, self.players)

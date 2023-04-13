@@ -1,4 +1,5 @@
 from conf import *
+from sprites import *
 
 class Menu(arcade.View):
     def __init__(self, players: int):

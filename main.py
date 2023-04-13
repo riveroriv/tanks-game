@@ -1,5 +1,6 @@
 from conf import *
 from views import *
+from sprites import *
 
 class App(arcade.Window):
     def __init__(self):

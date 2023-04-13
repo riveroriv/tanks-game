@@ -1,8 +1,6 @@
 import arcade
 import math
 
-from sprites import *
-
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = 'Tanks'
@@ -25,5 +23,3 @@ COLOR_PLAYER = {
 
 FONT_DIR = 'font/FGR.ttf'
 FONT_NAME = 'Franklin Gothic Heavy'
-
-BORDER = 20
