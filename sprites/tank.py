@@ -4,9 +4,11 @@ import pymunk
 from .bullet import Bullet
 
 class Tank(arcade.Sprite):
-    def __init__(self, image, scale, center_x, center_y, shape=None, refill_seconds=4):
+    def __init__(self, image, scale, center_x, center_y, player=0, shape=None, refill_seconds=4):
         super().__init__(image, scale, center_x=center_x, center_y=center_y)
+        self.player = player
         self.shape = shape
+        if shape != None : self.collision_info()
         self.alive = True
         self.bullets = 5
         self.speed = 0
@@ -24,6 +26,7 @@ class Tank(arcade.Sprite):
         shape.elasticity = elasticity
         shape.friction = friction
         self.shape = shape
+        self.collision_info()
         return (shape, body)
 
 
@@ -62,8 +65,8 @@ class Tank(arcade.Sprite):
     
     def shoot(self):
         if self.alive and self.bullets>0 :
-            bullet = Bullet('img/bullet.png', 1, self.angle , self.center_x, self.center_y)
-            bullet.make_shape(1, 5)
+            bullet = Bullet('img/bullet.png', 1, self.angle , self.center_x, self.center_y, self.player)
+            bullet.make_shape(1, 7)
             bullet.velocity = (
                     15 * math.cos(math.radians(self.angle + 90)),
                     15 * math.sin(math.radians(self.angle + 90))
@@ -72,3 +75,7 @@ class Tank(arcade.Sprite):
             self.munition[self.bullets].use()
             return bullet
         return None
+    
+    def collision_info(self):
+        self.shape.body.data = self
+        self.shape.collision_type = 2

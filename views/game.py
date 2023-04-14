@@ -28,6 +28,12 @@ class Game(arcade.View):
         
         self.space = pymunk.Space()
         self.space.damping = 0
+        
+        handler_bullet_tank = self.space.add_collision_handler(1, 2)
+        handler_bullet_tank.begin = self.begin_collision_bullet_tank
+
+        handler_bullet_object = self.space.add_collision_handler(1, 3)
+        handler_bullet_object.begin = self.begin_collision_bullet_object
 
         self.add_wall(0, 0, 0, SCREEN_HEIGHT) # left
         self.add_wall(0, 0, SCREEN_WIDTH, 0) # bottom
@@ -39,7 +45,7 @@ class Game(arcade.View):
 
         for i in range(players):
             image, center_x, center_y = self.tanks_sprite_info[i]
-            player = Tank(image, 1, center_x, center_y)
+            player = Tank(image, 1, center_x, center_y, i+1)
             body, shape = player.make_shape(10, (45,45), 1, 1)
             self.space.add(body, shape)
             self.tanks.append(player)
@@ -58,7 +64,7 @@ class Game(arcade.View):
                 munition = Munition(m, i, 90*side, center_x, center_y-15*m)
                 self.sprites.append(munition)
                 player.munition[m] = munition
-    
+
     def add_wall(self, x1, y1, x2, y2):
         wall_body = pymunk.Body(body_type=pymunk.Body.STATIC)
         wall_shape = pymunk.Segment(wall_body, (x1, y1), (x2, y2), 5)
@@ -72,19 +78,19 @@ class Game(arcade.View):
             self.sprites.append(bullet)
     
     def add_bush(self, x, y, angle):
-        bush = Object('img/bush.png', 1, angle, x, y, True)
+        bush = Object('img/bush.png', 1, angle, x, y, fixed=True, destroyed_image='img/bush_destroyed.png')
         bush.make_shape_circle(2, 15, 0.3, 1)
         self.space.add(bush.shape.body, bush.shape)
         self.sprites.append(bush)
 
     def add_rock(self, x, y, angle):
-        rock = Object('img/rock.png', 1, angle, x, y, True, False)
+        rock = Object('img/rock.png', 1, angle, x, y, fixed=True, destructible=False)
         rock.make_shape_circle(2, 25, 0.3, 1)
         self.space.add(rock.shape.body, rock.shape)
         self.sprites.append(rock)
     
     def add_box(self, x, y, angle=0):
-        box = Object('img/wood_box.png', 1, angle, x, y)
+        box = Object('img/wood_box.png', 1, angle, x, y, destructible=False)
         box.make_shape_box(2, (50,50))
         self.space.add(box.shape.body, box.shape)
         self.sprites.append(box)
@@ -174,3 +180,28 @@ class Game(arcade.View):
         if symbol == arcade.key.M : self.tanks[1].detener()
         if symbol == arcade.key.Q and self.players > 2: self.tanks[2].detener()
         if symbol == arcade.key.P and self.players > 3: self.tanks[3].detener()
+    
+    def begin_collision_bullet_tank(self, arbiter, space, data):
+        bullet, tank = arbiter.shapes
+        if bullet.collision_type == 2 and tank.collision_type == 1 :
+            bullet, tank = tank, bullet
+        
+        bullet = bullet.body.data
+        tank = tank.body.data
+
+        if bullet.owner != tank.player :
+            tank.die()
+            bullet.remove_from_sprite_lists()
+            
+        return True
+
+    def begin_collision_bullet_object(self, arbiter, space, data):
+        bullet, obj = arbiter.shapes
+        if bullet.collision_type == 3 and obj.collision_type == 1 :
+            bullet, obj = obj, bullet
+        bullet.body.data.remove_from_sprite_lists()
+        obj = obj.body.data
+        if obj.destructible :
+            self.space.remove(obj.shape.body, obj.shape)
+        obj.destroy()
+        return True

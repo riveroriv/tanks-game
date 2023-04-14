@@ -4,9 +4,14 @@ import pymunk
 from conf import SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Object(arcade.Sprite):
-    def __init__(self, image, scale, angle, center_x, center_y, fixed = False, destructible=True, destroyed=False, shape=None):
+    def __init__(
+        self, image, scale, angle, center_x, center_y, fixed = False,
+        destructible=True, destroyed=False, destroyed_image=None, shape=None
+        ):
         super().__init__(image, scale, angle=angle, center_x=center_x, center_y=center_y)
         self.shape = shape
+        if shape != None: self.collision_info()
+        self.destroyed_image = destroyed_image
         self.fixed = fixed
         self.destroyed = destroyed
         self.destructible = destructible
@@ -19,6 +24,7 @@ class Object(arcade.Sprite):
         shape.elasticity = elasticity
         shape.friction = friction
         self.shape = shape
+        self.collision_info()
 
     def make_shape_circle(self, mass, radius, static=False, elasticity=0, friction=0):
         if static : body = pymunk.Body(body_type=pymunk.Body.STATIC)
@@ -28,6 +34,7 @@ class Object(arcade.Sprite):
         shape.elasticity = elasticity
         shape.friction = friction
         self.shape = shape
+        self.collision_info()
 
     def update(self):
         if not self.destroyed and not self.fixed:
@@ -36,7 +43,13 @@ class Object(arcade.Sprite):
             self.center_x = self.shape.body.position.x
             self.center_y = self.shape.body.position.y
     
-    def kill(self):
+    def destroy(self):
+        if self.destroyed_image != None :
+            self.texture = arcade.load_texture(self.destroyed_image)
         if self.destructible :
             self.destroyed = True
-            self.texture = arcade.load_texture("img/tank_dead.png")
+            self.shape = None
+    
+    def collision_info(self):
+        self.shape.body.data = self
+        self.shape.collision_type = 3
