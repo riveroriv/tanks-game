@@ -34,7 +34,8 @@ class Tank(arcade.Sprite):
         self.center_y = self.shape.body.position.y + self.speed * math.cos(math.radians(self.angle))
         self.shape.body.position = pymunk.Vec2d(self.center_x, self.center_y)
 
-        self.refill_time+=1
+        if self.bullets < 5:
+            self.refill_time+=1
         if self.refill_time >= self.refill_delta and self.bullets < 5:
             self.refill_time = 0
             self.munition[self.bullets].fill()
