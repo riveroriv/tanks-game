@@ -26,6 +26,7 @@ class Bullet(arcade.Sprite):
         self.center_x = self.shape.body.position.x
         self.center_y = self.shape.body.position.y
         if self.top > SCREEN_HEIGHT or self.bottom < 0 or self.right > SCREEN_WIDTH or self.left < 0:
+            self.shape.collision_type = 0 # para que su shape no afecte en las coliciones
             self.remove_from_sprite_lists()
             self.kill()
     

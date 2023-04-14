@@ -48,7 +48,6 @@ class Object(arcade.Sprite):
             self.texture = arcade.load_texture(self.destroyed_image)
         if self.destructible :
             self.destroyed = True
-            self.shape = None
     
     def collision_info(self):
         self.shape.body.data = self

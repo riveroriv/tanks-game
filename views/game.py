@@ -29,11 +29,8 @@ class Game(arcade.View):
         self.space = pymunk.Space()
         self.space.damping = 0
         
-        handler_bullet_tank = self.space.add_collision_handler(1, 2)
-        handler_bullet_tank.begin = self.begin_collision_bullet_tank
-
-        handler_bullet_object = self.space.add_collision_handler(1, 3)
-        handler_bullet_object.begin = self.begin_collision_bullet_object
+        self.space.add_collision_handler(1, 2).begin = self.begin_collision_bullet_tank
+        self.space.add_collision_handler(1, 3).begin = self.begin_collision_bullet_object
 
         self.add_wall(0, 0, 0, SCREEN_HEIGHT) # left
         self.add_wall(0, 0, SCREEN_WIDTH, 0) # bottom
@@ -189,19 +186,30 @@ class Game(arcade.View):
         bullet = bullet.body.data
         tank = tank.body.data
 
+        print(bullet.owner, tank.player)
         if bullet.owner != tank.player :
-            tank.die()
+            if tank.alive : tank.die()
             bullet.remove_from_sprite_lists()
-            
+            self.remove_shape(bullet)
+        
         return True
 
     def begin_collision_bullet_object(self, arbiter, space, data):
         bullet, obj = arbiter.shapes
         if bullet.collision_type == 3 and obj.collision_type == 1 :
             bullet, obj = obj, bullet
-        bullet.body.data.remove_from_sprite_lists()
+        
         obj = obj.body.data
+        bullet = bullet.body.data
+
+        bullet.remove_from_sprite_lists()
+        self.remove_shape(bullet)
+
         if obj.destructible :
-            self.space.remove(obj.shape.body, obj.shape)
+            self.remove_shape(obj)
         obj.destroy()
         return True
+    
+    def remove_shape(self, sprite):
+        if sprite.shape != None :
+            self.space.remove(sprite.shape.body, sprite.shape)
