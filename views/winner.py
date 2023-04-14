@@ -17,15 +17,17 @@ class Winner(arcade.View):
             font_name='Franklin Gothic Heavy'
             )
         arcade.draw_text(
-            'WINS ',
+            'WINS' if self.winner != 0 else "DRAW",
             40, SCREEN_HEIGHT - 280,
-            arcade.color.WHITE, 160,
+            arcade.color.WHITE if self.winner != 0 else arcade.color.BLACK,
+            160,
             font_name='Franklin Gothic Heavy'
             )
         arcade.draw_text(
             '[ space to menu ] ',
             SCREEN_WIDTH*3/4, 50,
-            arcade.color.WHITE, 20,
+            arcade.color.WHITE if self.winner != 0 else arcade.color.BLACK,
+            20,
             font_name='Franklin Gothic Heavy'
             )
         arcade.draw_texture_rectangle(

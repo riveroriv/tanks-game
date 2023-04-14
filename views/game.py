@@ -147,12 +147,18 @@ class Game(arcade.View):
     def on_update(self, delta_time):
         self.space.step(1 / 60)
         self.sprites.update()
+        alive = 0
+        for tank in self.tanks:
+            if tank.alive : alive+=1
+        if alive <= 1 :
+            for i, tank in enumerate(self.tanks):
+                if tank.alive : self.winner = i+1
+            self.window.run_winner(self.winner, self.players)
     
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Z :
             self.add_bullet(self.tanks[0].shoot())
             self.tanks[0].avanzar()
-            self.tanks[0].die()
         if symbol == arcade.key.M :
             self.add_bullet(self.tanks[1].shoot())
             self.tanks[1].avanzar()
@@ -168,6 +174,3 @@ class Game(arcade.View):
         if symbol == arcade.key.M : self.tanks[1].detener()
         if symbol == arcade.key.Q and self.players > 2: self.tanks[2].detener()
         if symbol == arcade.key.P and self.players > 3: self.tanks[3].detener()
-    
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        self.window.run_winner(self.winner, self.players)
