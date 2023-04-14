@@ -1,9 +1,10 @@
 from conf import *
 from sprites import *
+from transformation import *
 import pymunk
 import random
 
-MARGIN = 100
+MARGIN = 150
 
 class Game(arcade.View):
     def __init__(self, players: int):
@@ -32,6 +33,9 @@ class Game(arcade.View):
         self.add_wall(0, 0, SCREEN_WIDTH, 0) # bottom
         self.add_wall(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT) # right
         self.add_wall(0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT) # top
+        
+        self.add_random_rocks(random.randint(2, 4))
+        self.add_random_bushes(random.randint(5, 8))
 
         for i in range(players):
             image, center_x, center_y = self.tanks_sprite_info[i]
@@ -40,16 +44,20 @@ class Game(arcade.View):
             self.space.add(body, shape)
             self.tanks.append(player)
             self.sprites.append(player)
-            
-            side = 1 if center_x != MARGIN else -1
+            self.add_barricade(
+                center_x ,
+                center_y ,
+                1 if center_x == MARGIN else -1,
+                1 if center_y == MARGIN else -1
+                )
+                
+            side = -1 if center_x == MARGIN else 1
             center_x = center_x + ( MARGIN -20 ) * side
             center_y += 30
             for m in range(5):
                 munition = Munition(m, i, 90*side, center_x, center_y-15*m)
                 self.sprites.append(munition)
                 player.munition[m] = munition
-            
-        self.add_objects()
     
     def add_wall(self, x1, y1, x2, y2):
         wall_body = pymunk.Body(body_type=pymunk.Body.STATIC)
@@ -63,22 +71,63 @@ class Game(arcade.View):
             self.bullets.append(bullet)
             self.sprites.append(bullet)
     
-    def add_bush(self, x, y):
-        bush = Object('img/bush.png', 1, 0, x, y, True)
-        bush.make_shape(2, (45,45), 0.3, 1)
+    def add_bush(self, x, y, angle):
+        bush = Object('img/bush.png', 1, angle, x, y, True)
+        bush.make_shape_circle(2, 15, 0.3, 1)
         self.space.add(bush.shape.body, bush.shape)
         self.sprites.append(bush)
+
+    def add_rock(self, x, y, angle):
+        rock = Object('img/rock.png', 1, angle, x, y, True, False)
+        rock.make_shape_circle(2, 25, 0.3, 1)
+        self.space.add(rock.shape.body, rock.shape)
+        self.sprites.append(rock)
     
-    def add_box(self, x, y):
-        box = Object('img/wood_box.png', 1, 0, x, y)
-        box.make_shape(2, (50,50))
+    def add_box(self, x, y, angle=0):
+        box = Object('img/wood_box.png', 1, angle, x, y)
+        box.make_shape_box(2, (50,50))
         self.space.add(box.shape.body, box.shape)
         self.sprites.append(box)
 
-    def add_objects(self):
-        self.add_box(10,10)
-        self.add_bush(100,10)
+    def add_random_bushes(self, n=10):
+        for i in range(n):
+            x = random.randint(MARGIN*2, SCREEN_WIDTH-MARGIN*2)
+            y = random.randint(0, SCREEN_HEIGHT)
+            angle = random.randint(0, 7) * 45
+            self.add_bush(x, y, angle)
+    
+    def add_random_rocks(self, n=10):
+        for i in range(n):
+            x = random.randint(MARGIN*2, SCREEN_WIDTH-MARGIN*2)
+            y = random.randint(0, SCREEN_HEIGHT)
+            angle = random.randint(0, 7) * 45
+            self.add_rock(x, y, angle)
 
+    def add_barricade(self, center_x, center_y, side_x, side_y, space_between=70):
+        angle = 180 if side_x == -1 and side_y == -1 else -1*side_x*45 + side_y*45
+        boxes_position = rotate(
+            angle
+            , [(
+                    center_x - space_between,
+                    center_y + space_between
+                ), (
+                    center_x,
+                    center_y + space_between
+                ), (
+                    center_x + space_between,
+                    center_y + space_between
+                ), (
+                    center_x + space_between,
+                    center_y
+                ), (
+                    center_x + space_between,
+                    center_y - space_between
+                )],
+            (center_x, center_y)
+        )
+        for b in boxes_position:
+            self.add_box(b[0], b[1])
+        
     def on_draw(self):
         self.clear()
         arcade.draw_texture_rectangle(

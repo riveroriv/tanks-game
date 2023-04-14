@@ -11,13 +11,20 @@ class Object(arcade.Sprite):
         self.destroyed = destroyed
         self.destructible = destructible
     
-    def make_shape(self, mass, size, static=False, elasticity=0, friction=0):
-        if static:
-            body = pymunk.Body(body_type=pymunk.Body.STATIC)
-        else :
-            body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
+    def make_shape_box(self, mass, size, static=False, elasticity=0, friction=0):
+        if static : body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        else : body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         body.position = pymunk.Vec2d(self.center_x, self.center_y)
         shape = pymunk.Poly.create_box(body, size)
+        shape.elasticity = elasticity
+        shape.friction = friction
+        self.shape = shape
+
+    def make_shape_circle(self, mass, radius, static=False, elasticity=0, friction=0):
+        if static : body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        else : body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, radius))
+        body.position = pymunk.Vec2d(self.center_x, self.center_y)
+        shape = pymunk.Circle(body, radius)
         shape.elasticity = elasticity
         shape.friction = friction
         self.shape = shape
