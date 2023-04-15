@@ -12,13 +12,14 @@ Richard Rivero Cornejo - 55800
 Para ejecutar el juego necesitas:
 
 * **python** >= 3.10
-* **arcade**
+* **arcade y numpy**
 * pantalla y teclado
 
-Instala arcade con pip:
+Instala arcade o numpy con pip:
 
 ```bash
   pip install arcade
+  pip install numpy
 ```
     
 ## Controles

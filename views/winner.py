@@ -1,11 +1,19 @@
 from conf import *
 
 class Winner(arcade.View):
+    '''
+    Vista del ganador o empate
+    '''
     def __init__(self, winner: int, players: int):
         super().__init__()
         self.winner = winner
+        '''índice del ganador'''
         self.players = players
+        '''número de jugadores'''
         self.imagen = arcade.load_texture('img/winner.png')
+        '''imagen de tanque mostrada'''
+
+        # cambia el color del fondo al del ganador, si es empate (0) u otro valor muestra blaco
         arcade.set_background_color(COLOR_PLAYER.get(self.winner, arcade.color.WHITE))
 
     def on_draw(self):
@@ -39,5 +47,6 @@ class Winner(arcade.View):
             )
 
     def on_key_press(self, symbol, modifiers):
+        # muestra la pantalla de menú al precionar espacio/enter
         if symbol == arcade.key.SPACE or symbol == arcade.key.ENTER :
             self.window.run_menu(self.players)

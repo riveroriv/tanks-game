@@ -3,6 +3,13 @@ from views import *
 from sprites import *
 
 class App(arcade.Window):
+    '''
+    Clase que crea la ventana del juego, tiene funciones para cambiar las
+    vistas y que ho haya importaciones circulares en las Views.
+
+    Aquí se pueden añadir acciones comunes a todas las vistas como ser
+    salir del juego si se presiona ESC.
+    '''
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         arcade.set_background_color(arcade.color.BLACK)

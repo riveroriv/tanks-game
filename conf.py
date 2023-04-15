@@ -1,3 +1,10 @@
+'''
+importaciones recurrentes que no generen importaciones circulares.
+
+Constantes de configuración como el ancho y alto de la pantalla,
+los colores a usar o hasta las fuentes.
+'''
+
 import arcade
 import math
 
